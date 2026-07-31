@@ -1,4 +1,4 @@
-const BASE = "/api/checklists";
+const BASE = `${import.meta.env.VITE_API_URL || ""}/api/checklists`;
 
 async function handle(res) {
   if (!res.ok) {
