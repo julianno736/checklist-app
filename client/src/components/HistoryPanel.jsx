@@ -18,7 +18,6 @@ export default function HistoryPanel({ items, loading, error, onRefresh, onDelet
         {error && <p className="hist-msg hist-error">{error}</p>}
         {!loading && !error && items.length === 0 && <p className="hist-msg">Aucune check-list enregistrée pour l'instant.</p>}
         
-        {/* Conteneur responsive pour le tableau */}
         {!loading && items.length > 0 && (
           <div style={{ width: "100%", overflowX: "auto", WebkitOverflowScrolling: "touch" }}>
             <table className="hist-table" style={{ width: "100%", minWidth: "550px", borderCollapse: "collapse" }}>
@@ -34,17 +33,18 @@ export default function HistoryPanel({ items, loading, error, onRefresh, onDelet
               </thead>
               <tbody>
                 {items.map((it) => {
-                  const creatorEmail = it.userEmail || it.email || "";
-                  const canDelete = creatorEmail && currentUserEmail && creatorEmail.toLowerCase() === currentUserEmail.toLowerCase();
+                  // Recherche élargie de l'email du créateur pour correspondre à ton API
+                  const creatorEmail = it.userEmail || it.email || it.user || it.createdBy || "";
+                  const canDelete = creatorEmail && currentUserEmail && creatorEmail.toLowerCase().trim() === currentUserEmail.toLowerCase().trim();
 
                   return (
-                    <tr key={it.id} className={it.hasNonOk ? "row-alert" : ""}>
+                    <tr key={it.id || it._id} className={it.hasNonOk ? "row-alert" : ""}>
                       <td>{it.date || "—"}</td>
                       <td>{it.vehicle === "semi" ? "Semi-remorque" : "Benne"}</td>
-                      <td>{it.chauffeur || "—"}</td>
-                      <td>{it.immatriculation || "—"}</td>
+                      <td>{it.chauffeur || it.info?.chauffeur || "—"}</td>
+                      <td>{it.immatriculation || it.info?.immatriculation || "—"}</td>
                       <td>
-                        {it.donePoints}/{it.totalPoints}
+                        {it.donePoints ?? it.progress?.done ?? 0}/{it.totalPoints ?? it.progress?.total ?? 0}
                       </td>
                       <td style={{ textAlign: "center" }}>
                         <div style={{ display: "flex", gap: "6px", justifyContent: "center", alignItems: "center" }}>
@@ -68,14 +68,14 @@ export default function HistoryPanel({ items, loading, error, onRefresh, onDelet
                           {/* Bouton Supprimer */}
                           {canDelete && onDelete && (
                             <button
-                              onClick={() => onDelete(it.id)}
+                              onClick={() => onDelete(it.id || it._id)}
                               title="Supprimer cet historique"
                               style={{
                                 background: "#e74c3c",
                                 color: "#fff",
                                 border: "none",
                                 borderRadius: "4px",
-                              padding: "5px 9px",
+                                padding: "5px 9px",
                                 cursor: "pointer",
                                 fontSize: "12px",
                               }}
@@ -94,7 +94,7 @@ export default function HistoryPanel({ items, loading, error, onRefresh, onDelet
         )}
       </div>
 
-      {/* Fenêtre modale des détails (responsive avec max-width et max-height adaptées) */}
+      {/* Fenêtre modale des détails */}
       {selectedItem && (
         <div style={{
           position: "fixed", top: 0, left: 0, width: "100%", height: "100%",
@@ -105,17 +105,25 @@ export default function HistoryPanel({ items, loading, error, onRefresh, onDelet
             
             <p style={{ fontSize: "14px", margin: "8px 0" }}><strong>Véhicule :</strong> {selectedItem.vehicle === "semi" ? "Semi-remorque" : "Benne"}</p>
             <p style={{ fontSize: "14px", margin: "8px 0" }}><strong>Date :</strong> {selectedItem.date || "—"}</p>
-            <p style={{ fontSize: "14px", margin: "8px 0" }}><strong>Chauffeur :</strong> {selectedItem.chauffeur || "—"}</p>
-            <p style={{ fontSize: "14px", margin: "8px 0" }}><strong>Immatriculation :</strong> {selectedItem.immatriculation || "—"}</p>
-            <p style={{ fontSize: "14px", margin: "8px 0" }}><strong>Créateur :</strong> {selectedItem.userEmail || selectedItem.email || "Non spécifié"}</p>
+            <p style={{ fontSize: "14px", margin: "8px 0" }}><strong>Chauffeur :</strong> {selectedItem.chauffeur || selectedItem.info?.chauffeur || "—"}</p>
+            <p style={{ fontSize: "14px", margin: "8px 0" }}><strong>Immatriculation :</strong> {selectedItem.immatriculation || selectedItem.info?.immatriculation || "—"}</p>
+            <p style={{ fontSize: "14px", margin: "8px 0" }}><strong>Créateur :</strong> {selectedItem.userEmail || selectedItem.email || selectedItem.user || "Non spécifié"}</p>
             
             <h5 style={{ margin: "15px 0 5px 0", color: "#34495e" }}>Informations générales :</h5>
-            <pre style={{ background: "#f8f9fa", padding: "10px", borderRadius: "4px", fontSize: "12px", overflowX: "auto", whiteSpace: "pre-wrap", wordBreak: "break-all" }}>
-              {JSON.stringify(selectedItem.info || {}, null, 2)}
-            </pre>
+            <div style={{ background: "#f8f9fa", padding: "10px", borderRadius: "4px", fontSize: "13px" }}>
+              {selectedItem.info && Object.keys(selectedItem.info).length > 0 ? (
+                Object.entries(selectedItem.info).map(([key, value]) => (
+                  <div key={key} style={{ margin: "4px 0" }}>
+                    <strong>{key} :</strong> {value || "—"}
+                  </div>
+                ))
+              ) : (
+                <p style={{ margin: 0, color: "#888", fontStyle: "italic" }}>Aucune information générale enregistrée.</p>
+              )}
+            </div>
 
             <h5 style={{ margin: "15px 0 5px 0", color: "#34495e" }}>Observations :</h5>
-            <p style={{ background: "#f8f9fa", padding: "10px", borderRadius: "4px", fontSize: "12px", wordBreak: "break-all" }}>
+            <p style={{ background: "#f8f9fa", padding: "10px", borderRadius: "4px", fontSize: "13px", wordBreak: "break-all" }}>
               {selectedItem.obs?.general || selectedItem.observation || "Aucune observation."}
             </p>
 
