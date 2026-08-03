@@ -1,3 +1,17 @@
 [
-  
+  {
+    "id": "msd1i548rxbpik",
+    "createdAt": "2026-08-03T09:41:41.864Z",
+    "vehicle": "semi",
+    "info": {},
+    "checks": {},
+    "dates": {},
+    "obs": {},
+    "validation": {},
+    "progress": {
+      "done": 0,
+      "total": 71,
+      "hasNonOk": false
+    }
+  }
 ]

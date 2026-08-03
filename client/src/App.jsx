@@ -5,6 +5,7 @@ import ChecklistSection from "./components/ChecklistSection.jsx";
 import CheckItem from "./components/CheckItem.jsx";
 import InfoField from "./components/InfoField.jsx";
 import HistoryPanel from "./components/HistoryPanel.jsx";
+import AuthForm from "./components/AuthForm.jsx";
 import {
   VEHICLES,
   COMMON_CONTROLE_DEPART,
@@ -26,6 +27,12 @@ const emptyState = () => ({
 });
 
 export default function App() {
+  const [user, setUser] = useState(() => {
+    const token = localStorage.getItem("token");
+    const email = localStorage.getItem("userEmail");
+    return token && email ? { email } : null;
+  });
+
   const [vehicle, setVehicle] = useState("semi");
   const [state, setState] = useState(emptyState);
   const [collapsed, setCollapsed] = useState(new Set());
@@ -48,8 +55,14 @@ export default function App() {
   }
 
   useEffect(() => {
-    loadHistory();
-  }, []);
+    if (user) loadHistory();
+  }, [user]);
+
+  function handleLogout() {
+    localStorage.removeItem("token");
+    localStorage.removeItem("userEmail");
+    setUser(null);
+  }
 
   function toggleCollapse(id) {
     setCollapsed((prev) => {
@@ -80,7 +93,6 @@ export default function App() {
     });
   }
 
-  // Tout cocher en "ok" pour une liste de clés donnée (par section)
   function selectAllKeys(keys, val = "ok") {
     setState((s) => {
       const next = { ...s.checks };
@@ -145,11 +157,6 @@ export default function App() {
   }
 
   async function handleDownload() {
-    if (progress.done < progress.total) {
-      showToast("Veuillez compléter tous les contrôles avant de télécharger le rapport.");
-      return;
-    }
-
     setSaving(true);
     try {
       await saveChecklist({
@@ -188,16 +195,24 @@ export default function App() {
   const pSecours = sectionProgress("secours");
   const pDoc = sectionProgress("documents");
 
+  if (!user) {
+    return <AuthForm onAuth={setUser} />;
+  }
+
+  // Extraction de l'initiale de l'e-mail
+  const userInitial = user.email ? user.email.charAt(0).toUpperCase() : "U";
+
   return (
     <>
       <Header percent={progress.percent} />
 
-      <div className="top-action-bar" style={{ display: "flex", gap: "10px", justifyContent: "flex-end", padding: "10px 20px" }}>
+      {/* Barre d'action supérieure épurée contenant uniquement le bouton de téléchargement */}
+      <div className="top-action-bar" style={{ display: "flex", justifyContent: "flex-end", alignItems: "center", padding: "10px 20px" }}>
         <button 
           className="icon-download-btn" 
           onClick={handleDownload} 
-          disabled={saving || progress.done < progress.total}
-          title={progress.done < progress.total ? "Veuillez cocher tous les éléments" : "Télécharger le rapport"}
+          disabled={saving}
+          title="Télécharger le rapport"
         >
           {saving ? (
             <span className="spinner">⏳</span>
@@ -275,7 +290,6 @@ export default function App() {
         >
           {COMMON_SECURITE.map((item) => {
             const key = ckKey("securite", item.label);
-            // Vérifie si l'élément concerne l'extincteur (ou utilise item.date s'il est déjà défini)
             const isExtincteur = item.label.toLowerCase().includes("extincteur");
             const dateKey = item.date || (isExtincteur ? "extincteur_validite" : undefined);
 
@@ -477,6 +491,72 @@ export default function App() {
         </ChecklistSection>
 
         <HistoryPanel items={history} loading={historyLoading} error={historyError} onRefresh={loadHistory} />
+
+        {/* --- PANNEAU DE PROFIL ET DECONNEXION EN BAS DE PAGE --- */}
+        <div style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          background: "#fff",
+          border: "1px solid #e1e4e8",
+          borderRadius: "10px",
+          padding: "15px 20px",
+          margin: "25px 0 10px 0",
+          boxShadow: "0 2px 8px rgba(0,0,0,0.05)"
+        }}>
+          {/* Bloc Profil avec Initiale et Email */}
+          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+            <div 
+              style={{
+                width: "40px",
+                height: "40px",
+                borderRadius: "50%",
+                background: "linear-gradient(135deg, #3498db, #2980b9)",
+                color: "#fff",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontWeight: "bold",
+                fontSize: "16px",
+                boxShadow: "0 2px 5px rgba(0,0,0,0.15)",
+                userSelect: "none"
+              }}
+            >
+              {userInitial}
+            </div>
+            <div>
+              <div style={{ fontSize: "12px", color: "#888", textTransform: "uppercase", letterSpacing: "0.5px", fontWeight: "600" }}>Connecté en tant que</div>
+              <div style={{ fontSize: "14px", color: "#333", fontWeight: "500" }}>{user.email}</div>
+            </div>
+          </div>
+
+          {/* Bouton de Déconnexion stylé en bas */}
+          <button 
+            onClick={handleLogout} 
+            style={{ 
+              padding: "9px 18px", 
+              fontSize: "13px", 
+              cursor: "pointer", 
+              border: "1px solid #e74c3c", 
+              borderRadius: "6px", 
+              background: "#fff",
+              color: "#e74c3c",
+              fontWeight: "600",
+              transition: "all 0.2s ease",
+              boxShadow: "0 2px 4px rgba(231, 76, 60, 0.1)"
+            }}
+            onMouseOver={(e) => {
+              e.currentTarget.style.background = "#e74c3c";
+              e.currentTarget.style.color = "#fff";
+            }}
+            onMouseOut={(e) => {
+              e.currentTarget.style.background = "#fff";
+              e.currentTarget.style.color = "#e74c3c";
+            }}
+          >
+            Déconnexion
+          </button>
+        </div>
       </div>
 
       <div className={`toast ${toast ? "show" : ""}`}>{toast}</div>
