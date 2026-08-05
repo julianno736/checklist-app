@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { login, register } from "../utils/api.js";
+import logo from "../assets/LOGO-transparent.png";
 
 export default function AuthForm({ onAuth }) {
   const [mode, setMode] = useState("login"); // "login" | "register"
@@ -26,7 +27,10 @@ export default function AuthForm({ onAuth }) {
   }
 
   return (
-    <div style={{ maxWidth: "360px", margin: "80px auto", padding: "24px", border: "1px solid #ddd", borderRadius: "8px" }}>
+    <div style={{ maxWidth: "360px", margin: "80px auto", padding: "24px" }}>
+      <div style={{ display: "flex", justifyContent: "center", marginBottom: "20px" }}>
+        <img src={logo} alt="Compagnie Masoandro" style={{ maxWidth: "220px", width: "100%", height: "auto" }} />
+      </div>
       <h2 style={{ marginBottom: "16px", textAlign: "center" }}>
         {mode === "login" ? "Connexion" : "Créer un compte"}
       </h2>

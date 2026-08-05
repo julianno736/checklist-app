@@ -1,17 +1,85 @@
 [
   {
-    "id": "msd1i548rxbpik",
-    "createdAt": "2026-08-03T09:41:41.864Z",
-    "vehicle": "semi",
-    "info": {},
-    "checks": {},
-    "dates": {},
-    "obs": {},
-    "validation": {},
+    "id": "msftarcq2yj3ig",
+    "createdAt": "2026-08-05T08:15:19.035Z",
+    "vehicle": "benne",
+    "info": {
+      "date": "2026-08-14",
+      "chauffeur": "Julianno",
+      "immat": "200",
+      "km": "1000",
+      "km_vidange": "200",
+      "depart": "Tamatave",
+      "destination": "Tamatave",
+      "fond_cuve": "3.5"
+    },
+    "checks": {
+      "controle_depart::Niveau huile moteur": "ok",
+      "controle_depart::Liquide de refroidissement": "ok",
+      "controle_depart::Lave-glace": "ok",
+      "controle_depart::Fuites visibles (huile, gasoil, eau)": "ok",
+      "controle_depart::État batterie (fixation + charge)": "ok",
+      "controle_depart::Test des freins au départ": "ok",
+      "controle_depart::Pression d'air": "ok",
+      "controle_depart::Feux avant / arrière": "ok",
+      "controle_depart::Clignotants": "ok",
+      "controle_depart::Feux stop": "ok",
+      "controle_depart::Feux de position": "ok",
+      "controle_depart::Klaxon": "ok",
+      "controle_depart::Essuie-glaces": "ok",
+      "controle_depart::Voyants tableau de bord": "ok",
+      "securite::Ceinture de sécurité": "ok",
+      "securite::Extincteur": "ok",
+      "securite::Triangle de signalisation": "ok",
+      "securite::Gilet réfléchissant": "ok",
+      "securite::Trousse de secours": "ok",
+      "securite::Cadenas de sécurité": "ok",
+      "securite::Sangles / chaîne de fixation du pneu secours": "ok",
+      "pneus::Droite": "ok",
+      "pneus::Gauche": "ok",
+      "pneus::Ar. Ext droite": "ok",
+      "pneus::Ar. Int Droite": "ok",
+      "pneus::Ar. Ext Gauche": "ok",
+      "pneus::Ar. Int Gauche": "ok",
+      "pneus::Hernies": "ok",
+      "pneus::Serrage des écrous": "ok",
+      "chassis::Choc ou fissure": "ok",
+      "chassis::Fixation ailes / marchepieds": "ok",
+      "chassis::État pare-chocs": "ok",
+      "chassis::Rétroviseurs": "ok",
+      "chassis::Suspension / amortisseurs": "ok",
+      "chassis::Réservoir air en bon état": "ok",
+      "chassis::Absence fuite d'air": "ok",
+      "chassis::Pare-brise": "ok",
+      "secours::Cric": "ok",
+      "secours::Clé de roue": "ok",
+      "secours::Tuyau gonflage": "ok",
+      "secours::Barre d'abattage": "ok",
+      "secours::Cales de roue": "ok",
+      "documents::Carte grise (tracteur + remorque)": "ok",
+      "documents::Assurance": "ok",
+      "documents::Visite technique": "non",
+      "documents::Patente": "ok"
+    },
+    "dates": {
+      "date_extincteur": "2026-08-08",
+      "date_assurance": "2026-08-08",
+      "date_visite": "2026-07-27",
+      "date_patente": "2026-08-01"
+    },
+    "obs": {
+      "general": "VERIFICATION FAIT A MADA"
+    },
+    "validation": {
+      "controle_par": "JULIANNOOOO",
+      "fonction": "DEV",
+      "sign_chauffeur": "GRRR",
+      "sign_aide": "HRRRRRR"
+    },
     "progress": {
-      "done": 0,
-      "total": 71,
-      "hasNonOk": false
+      "done": 50,
+      "total": 50,
+      "hasNonOk": true
     }
   }
 ]

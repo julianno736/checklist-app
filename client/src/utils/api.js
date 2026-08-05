@@ -43,6 +43,13 @@ export async function fetchHistory() {
   return handle(res);
 }
 
+export async function getChecklist(id) {
+  const res = await fetch(`${API_ROOT}/checklists/${id}`, {
+    headers: { ...authHeaders() },
+  });
+  return handle(res);
+}
+
 export async function saveChecklist(payload) {
   const res = await fetch(`${API_ROOT}/checklists`, {
     method: "POST",

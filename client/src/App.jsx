@@ -16,7 +16,7 @@ import {
   ckKey,
 } from "./data/checklistData.js";
 import { generateChecklistPdf } from "./utils/pdfGenerator.js";
-import { fetchHistory, saveChecklist } from "./utils/api.js";
+import { fetchHistory, saveChecklist, deleteChecklist } from "./utils/api.js";
 
 const emptyState = () => ({
   info: {},
@@ -62,6 +62,19 @@ export default function App() {
     localStorage.removeItem("token");
     localStorage.removeItem("userEmail");
     setUser(null);
+  }
+
+  // Fonction de suppression d'un élément de l'historique
+  async function handleDeleteHistory(id) {
+    if (!window.confirm("Voulez-vous vraiment supprimer cet élément de l'historique ?")) return;
+
+    try {
+      await deleteChecklist(id);
+      showToast("Élément supprimé avec succès !");
+      loadHistory();
+    } catch (err) {
+      showToast("Erreur lors de la suppression : " + err.message);
+    }
   }
 
   function toggleCollapse(id) {
@@ -199,14 +212,12 @@ export default function App() {
     return <AuthForm onAuth={setUser} />;
   }
 
-  // Extraction de l'initiale de l'e-mail
   const userInitial = user.email ? user.email.charAt(0).toUpperCase() : "U";
 
   return (
     <>
       <Header percent={progress.percent} />
 
-      {/* Barre d'action supérieure épurée contenant uniquement le bouton de téléchargement */}
       <div className="top-action-bar" style={{ display: "flex", justifyContent: "flex-end", alignItems: "center", padding: "10px 20px" }}>
         <button 
           className="icon-download-btn" 
@@ -490,9 +501,16 @@ export default function App() {
           </div>
         </ChecklistSection>
 
-        <HistoryPanel items={history} loading={historyLoading} error={historyError} onRefresh={loadHistory} />
+        {/* Intégration de l'historique avec la fonction de suppression active */}
+        <HistoryPanel 
+          items={history} 
+          loading={historyLoading} 
+          error={historyError} 
+          onRefresh={loadHistory} 
+          onDelete={handleDeleteHistory}
+        />
 
-        {/* --- PANNEAU DE PROFIL ET DECONNEXION EN BAS DE PAGE --- */}
+        {/* Panneau de profil et déconnexion en bas */}
         <div style={{
           display: "flex",
           justifyContent: "space-between",
@@ -504,7 +522,6 @@ export default function App() {
           margin: "25px 0 10px 0",
           boxShadow: "0 2px 8px rgba(0,0,0,0.05)"
         }}>
-          {/* Bloc Profil avec Initiale et Email */}
           <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
             <div 
               style={{
@@ -530,7 +547,6 @@ export default function App() {
             </div>
           </div>
 
-          {/* Bouton de Déconnexion stylé en bas */}
           <button 
             onClick={handleLogout} 
             style={{ 

@@ -19,7 +19,9 @@ const NON = [179, 64, 46];
 function statusLabel(checks, sectionKey, item) {
   const label = typeof item === "string" ? item : item.label;
   const val = checks[ckKey(sectionKey, label)];
-  return val === "non" ? "NON" : "";
+  if (val === "non") return "NON";
+  if (val === "ok") return "OK";
+  return "—";
 }
 
 export function generateChecklistPdf({ vehicle, state, progress }) {
@@ -76,23 +78,9 @@ export function generateChecklistPdf({ vehicle, state, progress }) {
     y = doc.lastAutoTable.finalY + 12;
   }
 
+  // Affiche désormais TOUS les points de contrôle (OK et NON), plus aucun filtrage
   function checksTable(rows) {
-    const filteredRows = rows.filter((row) => {
-      if (row.length === 1 && row[0].colSpan) return true;
-      return row[1] === "NON";
-    });
-
-    const hasOnlyGroups = filteredRows.every((row) => row.length === 1 && row[0].colSpan);
-
-    if (hasOnlyGroups || filteredRows.length === 0) {
-      doc.setFontSize(9.5);
-      doc.setFont("helvetica", "italic");
-      doc.setTextColor(46, 125, 70);
-      doc.text("Aucune anomalie détectée (Conforme)", 40, y);
-      y += 18;
-      doc.setTextColor(20, 20, 20);
-      return;
-    }
+    if (rows.length === 0) return;
 
     doc.autoTable({
       startY: y,
@@ -101,12 +89,13 @@ export function generateChecklistPdf({ vehicle, state, progress }) {
       styles: { fontSize: 9.5, cellPadding: 4, lineColor: [216, 210, 192], lineWidth: 0.5 },
       headStyles: { fillColor: [234, 229, 214], textColor: [20, 20, 20], fontStyle: "bold" },
       columnStyles: { 0: { cellWidth: 395 }, 1: { cellWidth: 90, halign: "center", fontStyle: "bold" } },
-      head: [["Point de contrôle non conforme", "Statut"]],
-      body: filteredRows,
+      head: [["Point de contrôle", "Statut"]],
+      body: rows,
       didParseCell: (data) => {
         if (data.section === "body" && data.column.index === 1) {
           const val = data.cell.raw;
           if (val === "NON") data.cell.styles.textColor = NON;
+          if (val === "OK") data.cell.styles.textColor = OK;
         }
       },
     });
@@ -129,7 +118,7 @@ export function generateChecklistPdf({ vehicle, state, progress }) {
   // Section 3 : Sécurité obligatoire + Affichage systématique de la date d'extincteur
   sectionHeader("3. Sécurité obligatoire");
   checksTable(COMMON_SECURITE.map((item) => [item.label, statusLabel(checks, "securite", item)]));
-  
+
   const extincteurDate = dates.extincteur_validite || dates.date_extincteur;
   if (extincteurDate) {
     doc.setFontSize(9.5);
@@ -210,4 +199,5 @@ export function generateChecklistPdf({ vehicle, state, progress }) {
   const filename = `checklist-${vehicle}-${info.date || new Date().toISOString().slice(0, 10)}.pdf`;
   doc.save(filename);
   return filename;
-} 
+}
+console.log("");

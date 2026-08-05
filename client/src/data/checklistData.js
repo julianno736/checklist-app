@@ -55,8 +55,8 @@ export const VEHICLES = {
       { id: "immat_remorque", label: "Immatriculation semi-remorque", type: "text" },
       { id: "km", label: "Kilométrage actuelle", type: "text" },
       { id: "km_vidange", label: "Kilomètrage seuil vidange", type: "text" },
-      { id: "depart", label: "Lieu de départ", type: "text" },
-      { id: "destination", label: "Destination", type: "text" },
+      { id: "depart", label: "Lieu de départ", type: "select-ville" },
+      { id: "destination", label: "Destination", type: "select-ville" },
       { id: "fond_cuve", label: "Fond de cuve", type: "text" },
     ],
     pneus: [
@@ -96,8 +96,8 @@ export const VEHICLES = {
       { id: "immat", label: "Immatriculation", type: "text" },
       { id: "km", label: "Kilométrage actuelle", type: "text" },
       { id: "km_vidange", label: "Kilomètrage seuil vidange", type: "text" },
-      { id: "depart", label: "Lieu de départ", type: "text" },
-      { id: "destination", label: "Destination", type: "text" },
+      { id: "depart", label: "Lieu de départ", type: "select-ville" },
+      { id: "destination", label: "Destination", type: "select-ville" },
       { id: "fond_cuve", label: "Fond de cuve", type: "text" },
     ],
     pneus: [

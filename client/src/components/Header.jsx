@@ -1,4 +1,4 @@
-import logo from "../assets/logo.jpg";
+import logo from "../assets/LOGO-transparent.png";
 
 const CIRCUMFERENCE = 138.2;
 

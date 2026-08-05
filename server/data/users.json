@@ -4,5 +4,11 @@
     "email": "elisjul02@gmail.com",
     "passwordHash": "$2a$10$6KYnB8EJgGjasg6u.QpOr.HOa7x0xdMSC7Fu3cTvIJxz5jAr0oEgC",
     "createdAt": "2026-08-03T09:23:54.385Z"
+  },
+  {
+    "id": "msfoco65heyuu7",
+    "email": "rakotonandrasanajulianno@gmail.com",
+    "passwordHash": "$2a$10$O9iM2IIBBibvGqWghip7BeULMm/PRHU7O9XoyoY0qwNxqePqwTZz6",
+    "createdAt": "2026-08-05T05:56:50.141Z"
   }
 ]
